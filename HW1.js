@@ -18,8 +18,8 @@ function main () {
      * Use matrix.pixel(i, j) to get the pixel
      *     matrix.pixel(i, j, [r,g,b]) to set the pixel
      **/
-    for (var i = 0; i < height; i++) {
-      for (var j = 0; j < width; j++) {
+    for (var i = 0; i < width; i++) {
+      for (var j = 0; j < height; j++) {
         upsideDown.pixel(i, j, inputMat.pixel(height-i-1, j))
         rightLeft.pixel(i, j, inputMat.pixel(i, height-j-1))
         diagonal.pixel(i, j, inputMat.pixel(j, i)) //invert x and y
