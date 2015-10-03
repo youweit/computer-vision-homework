@@ -2,10 +2,9 @@
   "name": "CV-homework",
   "version": "0.0.0",
   "description": "",
-  "main": "HW1.js",
+  "main": "M10409304_HW1.js",
   "dependencies": {
-    "opencv": "~3.2.0",
-    "standard": "~5.3.1"
+    "opencv": "~3.2.0"
   },
   "devDependencies": {},
   "scripts": {
