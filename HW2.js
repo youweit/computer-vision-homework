@@ -1,6 +1,17 @@
 var cv = require("opencv"),
     utils = require("./utils")
 
+function BoundingBox(label) {
+  this.label = label
+  this.top = 512
+  this.left = 512
+  this.down = 0
+  this.right = 0
+  this.area = 0
+  this.totalX = 0
+  this.totalY = 0
+}
+
 function main() {
 
   //read lena image from the file system using opencv
@@ -13,12 +24,11 @@ function main() {
         binaryThreshold = 128,
         histogramMax = 0,
         histogramData = new Uint32Array(256)
-
     console.log("input image =", width, " x ",height)
 
     /**
      * Use matrix.pixelValueAt(i, j) to get the pixel
-     *     matrix.pixelValueAt(i, j, [r,g,b]) to set the pixel
+     *     matrix.pixel(i, j, [b,g,r]) to set the pixel
      **/
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
@@ -33,6 +43,7 @@ function main() {
         binary.pixel(i, j, pixel)
       }
     }
+    binary.save('./output/HW2/HW2_binary.bmp')
 
     var histogram = new cv.Matrix(256, 256, cv.Constants.CV_8U)
     //draw histogram
@@ -46,6 +57,7 @@ function main() {
         }
       }
     }
+    histogram.save('./output/HW2/HW2_histogram.bmp')
 
     //connect componet here
     var globalLabel = 1,
@@ -142,40 +154,66 @@ function main() {
         max = 0
     //initialize the array
     for (var i = 0; i < boundingBoxes.length; i++) {
-      boundingBoxes[i] = 0
+      boundingBoxes[i] = new BoundingBox(i)
     }
 
+    //find the bounding boxes
     for (var i = 0; i < height; i++) {
       for (var j = 0; j < width; j++) {
-        // TODO:
-        boundingBoxes[label[i][j]]++
-        if (boundingBoxes[label[i][j]] > max) {
-          max = boundingBoxes[label[i][j]]
+        var currentLabel = label[i][j]
+        if (currentLabel > 0) {
+          if (i < boundingBoxes[currentLabel].left) {
+            boundingBoxes[currentLabel].left = i
+          }
+          if (i > boundingBoxes[currentLabel].right) {
+            boundingBoxes[currentLabel].right = i
+          }
+          if (j < boundingBoxes[currentLabel].top) {
+            boundingBoxes[currentLabel].top = j
+          }
+          if (j > boundingBoxes[currentLabel].down) {
+            boundingBoxes[currentLabel].down = j
+          }
+          boundingBoxes[currentLabel].area++
+          boundingBoxes[currentLabel].totalX += j
+          boundingBoxes[currentLabel].totalY += i
         }
       }
     }
 
     console.log("max = ",max, "boundingBoxes.length = ", boundingBoxes.length)
+    var boxColor = [0, 255, 0]
+    var cendroidColor = [0, 0, 255]
     for (var k = 0; k < boundingBoxes.length; k++) {
-      if (boundingBoxes[k] > 10000) {
-        console.log(boundingBoxes[k], k)
+      //we only want the area greater than 500
+      if (boundingBoxes[k].area > 500) {
+        console.log("big boundingBoxes = ",boundingBoxes[k])
+        if (boundingBoxes[k].label > 0) {
+          for (var j = boundingBoxes[k].left; j <= boundingBoxes[k].right; j++) {
+            binary.pixel(j, boundingBoxes[k].top, boxColor)
+            binary.pixel(j, boundingBoxes[k].down, boxColor)
+          }
+          for (var j = boundingBoxes[k].top+1; j <= boundingBoxes[k].down-1; j++) {
+            binary.pixel(boundingBoxes[k].left, j, boxColor)
+            binary.pixel(boundingBoxes[k].right, j, boxColor)
+          }
+          //cendroid
+          var x = boundingBoxes[k].totalX/boundingBoxes[k].area,
+              y = boundingBoxes[k].totalY/boundingBoxes[k].area
+          binary.pixel(y, x, cendroidColor)
+          for (var size = 1; size < 4; size++) {
+            binary.pixel(y-size, x, cendroidColor)
+            binary.pixel(y+size, x, cendroidColor)
+            binary.pixel(y, x-size, cendroidColor)
+            binary.pixel(y, x+size, cendroidColor)
+          } 
+        }
       }
     }
 
-    for (var i = 0; i < height; i++) {
-      for (var j = 0; j < width; j++) {
-        // TODO:
-      }
-    }
-    
-    console.log("boundingBoxes.length = ", boundingBoxes.length)
-    console.log(globalLabel)
-    binary.save('./output/HW2/HW2_binary.bmp')
-    histogram.save('./output/HW2/HW2_histogram.bmp')
+    binary.save('./output/HW2/HW2_connected_component.bmp')
     console.log('finished!')
     utils.showMatrixOnWindow(binary)
   })
 }
-
-
 main()
