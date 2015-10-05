@@ -12,6 +12,16 @@ function BoundingBox(label) {
   this.totalY = 0
 }
 
+function min(x, y){
+  if (x == 0) {
+    return y
+  } else if (y == 0) {
+    return x
+  } else {
+    return x < y? x:y
+  }
+}
+
 function main() {
 
   //read lena image from the file system using opencv
@@ -75,7 +85,7 @@ function main() {
         if (binary.pixelValueAt(i,j) == connectedPointValue) {
           if (i != 0 && j!= 0) {
             if (binary.pixelValueAt(i, j-1) == connectedPointValue && binary.pixelValueAt(i-1, j) == connectedPointValue) {
-              label[i][j] = Math.min(label[i][j-1], label[i-1][j])
+              label[i][j] = min(label[i][j-1], label[i-1][j])
             } else if (binary.pixelValueAt(i, j-1) == connectedPointValue) {
               label[i][j] = label[i][j-1]
             } else if (binary.pixelValueAt(i-1, j) == connectedPointValue) {
@@ -102,20 +112,21 @@ function main() {
         maxX = width-1
 
     do {
-      console.log("searching... ...")
+      // console.log("top down")
+      modified = false
       //top down
       for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
-          if (label[i,j] > 0) {
+          if (label[i][j] > 0) {
             k = 0
             if (i != 0 && j != 0) {
-              k = Math.min(label[i-1][j], label[i][j-1])
+              k = min(label[i-1][j], label[i][j-1])
               if (label[i][j] < k || k == 0) {
-                k = label[i, j]
+                k = label[i][j]
               } else if (i != 0 && j == 0) {
-                k = Math.min(label[i][j], label[i-1][j])
+                k = min(label[i][j], label[i-1][j])
               } else if (i == 0 && j != 0) {
-                k = Math.min(label[i][j], label[i][j-1])
+                k = min(label[i][j], label[i][j-1])
               }
               if (label[i][j] != k) {
                 modified = true
@@ -126,18 +137,19 @@ function main() {
         }
       }
       //bottom up
+      // console.log("bottom up")
       for (var i = maxY; i >= 0; i--) {
         for (var j = maxX; j >= 0; j--) {
-          if (label[i,j] > 0) {
+          if (label[i][j] > 0) {
             k = 0
             if (i != maxY && j != maxX) {
-              k = Math.min(label[i+1][j], label[i][j+1])
+              k = min(label[i+1][j], label[i][j+1])
               if (label[i][j] < k || k == 0) {
-                k = label[i, j]
+                k = label[i][j]
               } else if (i != maxY && j == maxX) {
-                k = Math.min(label[i][j], label[i+1][j])
+                k = min(label[i][j], label[i+1][j])
               } else if (i == maxY && j != maxX) {
-                k = Math.min(label[i][j], label[i][j+1])
+                k = min(label[i][j], label[i][j+1])
               }
               if (label[i][j] != k) {
                 modified = true
