@@ -79,28 +79,12 @@ function main() {
         label[i] = new Array(512)
     }
 
+    //initial labels
     for (var i = 0; i < height; i++) {
       for (var j = 0; j < width; j++) {
         label[i][j] = 0
         if (binary.pixelValueAt(i,j) == connectedPointValue) {
-          if (i != 0 && j!= 0) {
-            if (binary.pixelValueAt(i, j-1) == connectedPointValue && binary.pixelValueAt(i-1, j) == connectedPointValue) {
-              label[i][j] = min(label[i][j-1], label[i-1][j])
-            } else if (binary.pixelValueAt(i, j-1) == connectedPointValue) {
-              label[i][j] = label[i][j-1]
-            } else if (binary.pixelValueAt(i-1, j) == connectedPointValue) {
-              label[i][j] = label[i-1][j]
-            } else {
-              label[i][j] = globalLabel++
-            }
-          } else if (i == 0 && j != 0) {
-            label[i][j] = binary.pixelValueAt(i, j-1) == connectedPointValue? label[i][j-1]: globalLabel++
-          } else if (i != 0 && j == 0) {
-            label[i][j] = binary.pixelValueAt(i-1, j) == connectedPointValue? label[i-1][j]: globalLabel++
-          } else {
-            //first pixel in every row
-            label[i][j] = globalLabel++
-          }
+          label[i][j] = globalLabel++
         }
       }
     }
@@ -110,7 +94,7 @@ function main() {
         modified = false,
         maxY = height-1,
         maxX = width-1
-
+    var count = 0;
     do {
       // console.log("top down")
       modified = false
@@ -159,8 +143,10 @@ function main() {
           }
         }
       }
+      count++
     } while (modified)
 
+    console.log("iterate count = ",count)
     //Draw the bounding boxes
     var boundingBoxes = new Array(globalLabel)
         max = 0
@@ -199,7 +185,7 @@ function main() {
     for (var k = 0; k < boundingBoxes.length; k++) {
       //we only want the area greater than 500
       if (boundingBoxes[k].area > 500) {
-        console.log("big boundingBoxes = ",boundingBoxes[k])
+        // console.log("big boundingBoxes = ",boundingBoxes[k])
         if (boundingBoxes[k].label > 0) {
           for (var j = boundingBoxes[k].left; j <= boundingBoxes[k].right; j++) {
             binary.pixel(j, boundingBoxes[k].top, boxColor)
@@ -213,7 +199,7 @@ function main() {
           var x = boundingBoxes[k].totalX/boundingBoxes[k].area,
               y = boundingBoxes[k].totalY/boundingBoxes[k].area
           binary.pixel(y, x, cendroidColor)
-          for (var size = 1; size < 4; size++) {
+          for (var size = 1; size < 5; size++) {
             binary.pixel(y-size, x, cendroidColor)
             binary.pixel(y+size, x, cendroidColor)
             binary.pixel(y, x-size, cendroidColor)
@@ -222,7 +208,6 @@ function main() {
         }
       }
     }
-
     binary.save('./output/HW2/HW2_connected_component.bmp')
     console.log('finished!')
     utils.showMatrixOnWindow(binary)
