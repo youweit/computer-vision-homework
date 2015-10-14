@@ -1,10 +1,15 @@
-var cv = require("opencv"),
+var cv = require("opencv")
     utils = require("./utils")
 
 function main() {
 
   //read lena image from the file system using opencv
-  cv.readImage('image/lena.bmp', function(err, inputMat){
+  cv.readImage(process.argv[2], function(err, inputMat){
+
+    if(err || inputMat.height() == 0 || inputMat.width == 0) {
+      console.log('input image error!')
+      return
+    }
 
     var darkerLena = inputMat.copy(),
         equalizedLena = inputMat.copy(),
@@ -13,7 +18,7 @@ function main() {
         totalPixels = height * width
     console.log("input image =", width, " x ",height)
 
-    //make a dark image of lena by divided by 3.
+    // make a dark image of lena by divided by 3.
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
         //calculate histogram
@@ -24,34 +29,25 @@ function main() {
       }
     }
 
-    drawHistogram(darkerLena, 'darkerLena')
+    var accumulated = drawHistogram(darkerLena, 'darkerLena')
 
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
         //calculate histogram
-        var value = inputMat.pixelValueAt(i,j)
-        var k = 0
-        for (var i = 0; i < width; i++) {
-          for (var j = 0; j < height; j++) {
-            if (darkerLena.pixelValueAt(i,j) < value) k++
-          }
-        }
-
-        value = k / totalPixels * 255
+        var value = accumulated[darkerLena.pixelValueAt(i,j)] / totalPixels * 255
         equalizedLena.pixel(i, j, [value, value, value])
       }
     }
 
     drawHistogram(equalizedLena, 'equalizedLena')
-    // binary.save('./output/HW2/HW2_connected_component.bmp')
     console.log('finished!')
-    utils.showMatrixOnWindow(equalizedLena)
   })
 
   function drawHistogram(mat, fileName){
     var histogramMax = 0,
         histogramData = new Uint32Array(256)
     var histogram = new cv.Matrix(256, 256, cv.Constants.CV_8U)
+
 
     for (var i = 0; i < mat.width(); i++) {
       for (var j = 0; j < mat.height(); j++) {
@@ -78,6 +74,13 @@ function main() {
     
     mat.save('./output/HW3/HW3_'+fileName+'.bmp')
     histogram.save('./output/HW3/HW3_'+fileName+'_histogram.bmp')
+
+    //cdf
+    for (var i = 1; i < 256; i++) {
+      histogramData[i] += histogramData[i-1]
+    }
+
+    return histogramData
   }
 }
 
