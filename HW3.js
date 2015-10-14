@@ -21,10 +21,7 @@ function main() {
     // make a dark image of lena by divided by 3.
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
-        //calculate histogram
-        var value = inputMat.pixelValueAt(i,j)
-        //apply binary for threshold
-        pixel = value / 3
+        pixel = inputMat.pixelValueAt(i,j) / 3
         darkerLena.pixel(i, j, [pixel, pixel, pixel])
       }
     }
@@ -75,7 +72,7 @@ function main() {
     mat.save('./output/HW3/HW3_'+fileName+'.bmp')
     histogram.save('./output/HW3/HW3_'+fileName+'_histogram.bmp')
 
-    //cdf
+    //calculate the cdf of each gray level.
     for (var i = 1; i < 256; i++) {
       histogramData[i] += histogramData[i-1]
     }
