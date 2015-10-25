@@ -7,26 +7,37 @@ function applyDilation(inputMat) {
 
   let result = inputMat.copy()
   let whitePixel = [255, 255, 255]
+  let pixelsToModefy = []
 
-  for (let i = 0; i < inputMat.width(); i++) {
-    for (let j = 0; j < inputMat.height(); j++) {
-      if (inputMat.pixelValueAt(i,j) == 255) {
-        let pixelToChange = i
+  for (let i = 0; i < inputMat.height(); i++) {
+    for (let j = 0; j < inputMat.width(); j++) {
+      if (inputMat.pixelValueAt(i,j) == whitePixel[0]) {
+        let pixelToChange = {row: i, col: j}
+        
+        //apply 1,1,5,1,1 kernel
+
         for (let kernel = 0; kernel < 5; kernel++) {
-          let k = pixelToChange + kernel
+          let k = pixelToChange.col + kernel
           if (k < inputMat.width()) {
-            // result.pixel(k, 10, [255, 0, 0])
+            pixelsToModefy.push({row: i, col: k})
           }
         }
-        // for (let kernel = 0; kernel < 5; kernel++) {
-        //   let k = pixelToChange + kernel
-        //   if (k < inputMat.height()) {
-        //     result.pixel(i, k, whitePixel)
-        //   }
-        // }
+
+        for (let kernel = 0; kernel < 5; kernel++) {
+          let k = pixelToChange.row + kernel
+          if (k < inputMat.width()) {
+            pixelsToModefy.push({row: k, col: j})
+          }
+        }
       }
     }
   }
+
+  //apply the effect
+  for (let pixel of pixelsToModefy) {
+    result.pixel(pixel.row, pixel.col, whitePixel)
+  }
+
   return result
 }
 
