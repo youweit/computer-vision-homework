@@ -1,10 +1,16 @@
-var cv = require("opencv"),
-    utils = require("./utils")
+'use strict';
+
+const cv = require("opencv")
+const utils = require("./utils")
 
 function main () {
 
-  //read lena image from the file system using opencv
-  cv.readImage('image/lena.bmp', function(err, inputMat){
+  cv.readImage(process.argv[2], function(err, inputMat){
+
+    if(err || inputMat.height() == 0 || inputMat.width == 0) {
+      console.log('input image error!')
+      return
+    }
 
     var upsideDown = inputMat.copy(),
         rightLeft = inputMat.copy(),
@@ -15,7 +21,8 @@ function main () {
     console.log("input image =", width, " x ",height)
 
     /**
-     * Use matrix.pixel(i, j) to get the pixel
+     * Matrix(rows, cols)
+     * Use matrix.pixel(ro, j) to get the pixel
      *     matrix.pixel(i, j, [r,g,b]) to set the pixel
      **/
     for (var i = 0; i < width; i++) {
@@ -30,7 +37,6 @@ function main () {
     rightLeft.save('./output/HW1/HW1_right_left.bmp')
     diagonal.save('./output/HW1/HW1_diagonal.bmp')
     console.log('finished!')
-    // utils.showMatrixOnWindow(diagonal)
   })
 }
 

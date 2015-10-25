@@ -1,10 +1,12 @@
-var cv = require("opencv"),
-    utils = require("./utils")
+'use strict';
+
+const cv = require("opencv")
+const utils = require("./utils")
 
 function BoundingBox(label) {
   this.label = label
-  this.top = 512
-  this.left = 512
+  this.top = 512 //should be image width
+  this.left = 512 //should be image height
   this.down = 0
   this.right = 0
   this.area = 0
@@ -23,15 +25,18 @@ function min(x, y){
 }
 
 function main() {
+  cv.readImage(process.argv[2], function(err, inputMat){
 
-  //read lena image from the file system using opencv
-  cv.readImage('image/lena.bmp', function(err, inputMat){
+    if(err || inputMat.height() == 0 || inputMat.width == 0) {
+      console.log('input image error!')
+      return
+    }
 
     var binary = inputMat.copy(),
         connectComponet = inputMat.copy(),
         height = inputMat.height(),
         width = inputMat.width(),
-        binaryThreshold = 128,
+        binaryThreshold = 200,
         histogramMax = 0,
         histogramData = new Uint32Array(256)
     console.log("input image =", width, " x ",height)
@@ -40,8 +45,8 @@ function main() {
      * Use matrix.pixelValueAt(i, j) to get the pixel
      *     matrix.pixel(i, j, [b,g,r]) to set the pixel
      **/
-    for (var i = 0; i < width; i++) {
-      for (var j = 0; j < height; j++) {
+    for (var i = 0; i < height; i++) {
+      for (var j = 0; j < width; j++) {
         //calculate histogram
         var value = inputMat.pixelValueAt(i,j)
         histogramData[value]++
@@ -49,7 +54,7 @@ function main() {
           histogramMax = histogramData[value]
         }
         //apply binary for threshold
-        pixel = value < binaryThreshold ? [0, 0, 0]: [255, 255, 255]
+        let pixel = value < binaryThreshold ? [0, 0, 0]: [255, 255, 255]
         binary.pixel(i, j, pixel)
       }
     }
@@ -72,11 +77,11 @@ function main() {
     //connect componet here
     var globalLabel = 1,
         connectedPointValue = 255,
-        label = new Array(512)
+        label = new Array(height)
 
     //initial the label array with capacity 512x512
-    for (var i = 0; i < 512; i++) {
-        label[i] = new Array(512)
+    for (var i = 0; i < height; i++) {
+        label[i] = new Array(width)
     }
 
     //initial labels
@@ -148,16 +153,18 @@ function main() {
 
     console.log("iterate count = ",count)
     //Draw the bounding boxes
-    var boundingBoxes = new Array(globalLabel)
-        max = 0
+    let boundingBoxes = new Array(globalLabel)
+    let max = 0
     //initialize the array
     for (var i = 0; i < boundingBoxes.length; i++) {
       boundingBoxes[i] = new BoundingBox(i)
+      boundingBoxes[i].top = width
+      boundingBoxes[i].left = height
     }
 
     //find the bounding boxes
-    for (var i = 0; i < height; i++) {
-      for (var j = 0; j < width; j++) {
+    for (var i = 0; i < width; i++) {
+      for (var j = 0; j < height; j++) {
         var currentLabel = label[i][j]
         if (currentLabel > 0) {
           if (i < boundingBoxes[currentLabel].left) {
@@ -185,7 +192,7 @@ function main() {
     for (var k = 0; k < boundingBoxes.length; k++) {
       //we only want the area greater than 500
       if (boundingBoxes[k].area > 500) {
-        // console.log("big boundingBoxes = ",boundingBoxes[k])
+        console.log("big boundingBoxes = ",boundingBoxes[k])
         if (boundingBoxes[k].label > 0) {
           for (var j = boundingBoxes[k].left; j <= boundingBoxes[k].right; j++) {
             binary.pixel(j, boundingBoxes[k].top, boxColor)

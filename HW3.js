@@ -1,5 +1,7 @@
-var cv = require("opencv")
-    utils = require("./utils")
+'use strict';
+
+const cv = require("opencv")
+const utils = require("./utils")
 
 function main() {
 
@@ -21,7 +23,7 @@ function main() {
     // make a dark image of lena by divided by 3.
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
-        pixel = inputMat.pixelValueAt(i,j) / 3
+        let pixel = inputMat.pixelValueAt(i,j) / 3
         darkerLena.pixel(i, j, [pixel, pixel, pixel])
       }
     }
