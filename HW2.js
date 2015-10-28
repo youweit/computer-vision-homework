@@ -36,7 +36,7 @@ function main() {
         connectComponet = inputMat.copy(),
         height = inputMat.height(),
         width = inputMat.width(),
-        binaryThreshold = 200,
+        binaryThreshold = 128,
         histogramMax = 0,
         histogramData = new Uint32Array(256)
     console.log("input image =", width, " x ",height)
