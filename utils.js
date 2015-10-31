@@ -12,6 +12,20 @@ exports.showMatrixOnWindow = function(mat) {
   window.blockingWaitKey(0, 90000);
 }
 
+exports.applyGrayscale = function(mat) {
+
+  let grayScaleMat = mat.copy()
+
+  for (var i = 0; i < mat.height(); i++) {
+    for (var j = 0; j < mat.width(); j++) {
+      //apply binary for threshold 128
+      let grayPixel = mat.pixel(i,j)[0] * 0.0722  + mat.pixel(i,j)[1] * 0.7152 + mat.pixel(i,j)[2] * 0.2126
+      grayScaleMat.pixel(i, j, [grayPixel, grayPixel, grayPixel])
+    }
+  }
+  return grayScaleMat
+}
+
 exports.binarized = function(mat) {
 
   let binary = mat.copy()

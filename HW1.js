@@ -1,6 +1,6 @@
 'use strict';
 
-const cv = require("opencv")
+  
 const utils = require("./utils")
 
 function main () {

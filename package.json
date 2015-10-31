@@ -4,6 +4,7 @@
   "description": "",
   "main": "index",
   "dependencies": {
+    "get-pixels": "^3.2.3",
     "opencv": "~3.2.0"
   },
   "devDependencies": {
