@@ -165,7 +165,7 @@ function main() {
     //find the bounding boxes
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
-        var currentLabel = label[i][j]
+        let currentLabel = label[i][j]
         if (currentLabel > 0) {
           if (i < boundingBoxes[currentLabel].left) {
             boundingBoxes[currentLabel].left = i

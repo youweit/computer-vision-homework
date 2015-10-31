@@ -15,7 +15,7 @@ function Kernel(kernel, origin) {
   this.points = []
   for (let x = 0; x < kernel.length; x++) {
     for (let y = 0; y < kernel[x].length; y++) {
-      if (kernel[x][y] == 1) {
+      if (kernel[y][x] == 1) {
         this.points.push({x: (x - origin.x), y: (y - origin.y)})
       }
     }
@@ -26,11 +26,10 @@ function Kernel(kernel, origin) {
 function applyDilation(inputMat, kernel) {
 
   let result = inputMat.copy()
-  let whitePixel = [255, 255, 255]
   
   for (let i = 0; i < inputMat.height(); i++) { //this is image height
     for (let j = 0; j < inputMat.width(); j++) { //this is image width
-      if (inputMat.pixelValueAt(i,j) == whitePixel[0]) {
+      if (inputMat.pixelValueAt(i,j)) {
         for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
           let x = j + kernel.points[kernelIndex].x
           let y = i + kernel.points[kernelIndex].y
@@ -41,7 +40,6 @@ function applyDilation(inputMat, kernel) {
       }
     }
   }
-  
 
   return result
 }
@@ -52,7 +50,7 @@ function applyErosion(inputMat, kernel) {
 
   for (let i = 0; i < inputMat.height(); i++) { //this is image height
     for (let j = 0; j < inputMat.width(); j++) { //this is image width
-      if (inputMat.pixelValueAt(i,j) === whitePixel[0]) {
+      if (inputMat.pixelValueAt(i,j)) {
         let erosion = true
         for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
           let x = j + kernel.points[kernelIndex].x
@@ -60,12 +58,13 @@ function applyErosion(inputMat, kernel) {
 
           if (x >= 0 && x <= inputMat.width() && y >= 0 && y <= inputMat.height()) {
             //pixelValueAt(col, row)
-            if (inputMat.pixelValueAt(y,x) !== whitePixel[0]) {
+            if (!inputMat.pixelValueAt(y,x)) {
               erosion = false
               break;
             }
           } else {
             erosion = false
+            break;
           }
         }
         if (erosion) {
@@ -79,7 +78,6 @@ function applyErosion(inputMat, kernel) {
   return result
 }
 
-
 function applyOpening(inputMat, kernel) {
   return applyDilation(applyErosion(inputMat, kernel), kernel)
 }
@@ -90,26 +88,31 @@ function applyClosing(inputMat, kernel) {
 
 function applyReverse(inputMat) {
   let result = inputMat.copy()
-  let whitePixel = [255, 255, 255]
-  let blackPixel = []
+
   for (let i = 0; i < inputMat.height(); i++) { //this is image height
     for (let j = 0; j < inputMat.width(); j++) { //this is image width
-      if (inputMat.pixelValueAt(i,j) == 255) {
+      if (inputMat.pixelValueAt(i,j)) {
         result.pixel(i, j, blackPixel)
       } else {
         result.pixel(i, j, whitePixel)
       }
     }
   }
+
+  result.save('./output/HW4/reverse.bmp')
   return result
 }
 
 function intersect(matA, matB) {
   let result = matA.copy()
 
+  matA.save('./output/HW4/matA.bmp')
+  matB.save('./output/HW4/matB.bmp')
+
   for (let i = 0; i < matA.height(); i++) { //this is image height
     for (let j = 0; j < matA.width(); j++) { //this is image width
-      if (matA.pixelValueAt(i,j) == matB.pixelValueAt(i,j)) {
+      // console.log('sda', matA.pixelValueAt(i, j))
+      if (matA.pixelValueAt(i, j) == matB.pixelValueAt(i, j)) {
         result.pixel(i, j, whitePixel)
       } else {
         result.pixel(i, j, blackPixel)
@@ -120,9 +123,9 @@ function intersect(matA, matB) {
   return result
 }
 
-function applyHitAndMiss(inputMat, kernelJ, kernelK) {
+function applyHitAndMiss(inputMat, J, K) {
 
-  return intersect(applyErosion(inputMat, kernelJ), applyErosion(applyReverse(inputMat), kernelK))
+  return intersect(applyErosion(inputMat, J), applyErosion(applyReverse(inputMat), K))
 }
 
 function main() {
@@ -153,37 +156,39 @@ function main() {
     ] //origin is 2,2,
 
     //convert the input image to binary.
+    inputMat = utils.applyGrayscale(inputMat)
     inputMat = utils.binarized(inputMat)
 
-    dilationMat = applyDilation(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
-    dilationMat.save('./output/HW4/HW4_dilation.bmp')
+    // inputMat.save('./output/HW4/HW4_binary.bmp')
+    // dilationMat = applyDilation(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
+    // dilationMat.save('./output/HW4/HW4_dilation.bmp')
 
-    erosionMat = applyErosion(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
-    erosionMat.save('./output/HW4/HW4_erosion.bmp')
+    // erosionMat = applyErosion(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
+    // erosionMat.save('./output/HW4/HW4_erosion.bmp')
 
-    openingMat = applyOpening(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
-    openingMat.save('./output/HW4/HW4_opening.bmp')
+    // openingMat = applyOpening(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
+    // openingMat.save('./output/HW4/HW4_opening.bmp')
 
-    closingMat = applyClosing(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
-    closingMat.save('./output/HW4/HW4_closing.bmp')
+    // closingMat = applyClosing(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
+    // closingMat.save('./output/HW4/HW4_closing.bmp')
 
-    let kernelJ = [
-      [0, 0, 0],
-      [1, 1, 0],
-      [0, 1, 0]
+    let L = [
+      [1, 1],
+      [0, 1]
     ]
 
-    let kernelK = [
-      [0, 1, 1],
-      [0, 0, 1],
-      [0, 0, 0]
-    ]
+    let kernelJ = new Kernel(L, {x: 0, y: 1})
+    let kernelK = new Kernel(L, {x: 1, y: 0})
 
-    hitAndMissMat = applyHitAndMiss(inputMat, new Kernel(kernelJ, {x: 1, y: 1}), new Kernel(kernelK, {x: 1, y: 1}))
-    hitAndMissMat.save('./output/HW4/HW4_HitAndMiss.bmp')
+    hitAndMissMat = applyHitAndMiss(inputMat, kernelJ, kernelK)
+    hitAndMissMat.save('./output/HW4/HW4_hitAndMiss.bmp')
+
+    console.log('finished!')
     utils.showMatrixOnWindow(hitAndMissMat)
+
   })
 }
 
-
 main()
+
+
