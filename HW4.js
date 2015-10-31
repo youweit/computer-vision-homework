@@ -153,7 +153,6 @@ function main() {
     ] //origin is 2,2,
 
     //convert the input image to binary.
-    inputMat = utils.applyGrayscale(inputMat)
     inputMat = utils.binarized(inputMat)
 
     dilationMat = applyDilation(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))
@@ -179,6 +178,7 @@ function main() {
       [0, 0, 1],
       [0, 0, 0]
     ]
+
     hitAndMissMat = applyHitAndMiss(inputMat, new Kernel(kernelJ, {x: 1, y: 1}), new Kernel(kernelK, {x: 1, y: 1}))
     hitAndMissMat.save('./output/HW4/HW4_HitAndMiss.bmp')
     utils.showMatrixOnWindow(hitAndMissMat)
