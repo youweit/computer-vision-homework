@@ -1,24 +1,21 @@
-'use strict';
+'use strict'
 
-  
-const utils = require("./utils")
+const cv = require('opencv')
 
 function main () {
-
-  cv.readImage(process.argv[2], function(err, inputMat){
-
-    if(err || inputMat.height() == 0 || inputMat.width == 0) {
+  cv.readImage(process.argv[2], function (err, inputMat) {
+    if (err || inputMat.height() === 0 || inputMat.width === 0) {
       console.log('input image error!')
       return
     }
 
-    var upsideDown = inputMat.copy(),
-        rightLeft = inputMat.copy(),
-        diagonal = inputMat.copy(),
-        height = inputMat.height(),
-        width = inputMat.width()
+    let upsideDown = inputMat.copy()
+    let rightLeft = inputMat.copy()
+    let diagonal = inputMat.copy()
+    let height = inputMat.height()
+    let width = inputMat.width()
 
-    console.log("input image =", width, " x ",height)
+    console.log('input image =', width, ' x ', height)
 
     /**
      * Matrix(rows, cols)
@@ -27,9 +24,9 @@ function main () {
      **/
     for (var i = 0; i < width; i++) {
       for (var j = 0; j < height; j++) {
-        upsideDown.pixel(i, j, inputMat.pixel(height-i-1, j))
-        rightLeft.pixel(i, j, inputMat.pixel(i, height-j-1))
-        diagonal.pixel(i, j, inputMat.pixel(j, i)) //invert x and y
+        upsideDown.pixel(i, j, inputMat.pixel(height - i - 1, j))
+        rightLeft.pixel(i, j, inputMat.pixel(i, height - j - 1))
+        diagonal.pixel(i, j, inputMat.pixel(j, i)) // invert x and y
       }
     }
 
