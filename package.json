@@ -1,10 +1,9 @@
 {
   "name": "CV-homework",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index",
   "dependencies": {
-    "get-pixels": "^3.2.3",
     "opencv": "~3.2.0"
   },
   "devDependencies": {
@@ -13,13 +12,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/youweit/CV-homework.git"
-  },
   "author": "Youwei Teng",
-  "license": "BSD-2-Clause",
-  "bugs": {
-    "url": "https://github.com/youweit/CV-homework/issues"
-  }
+  "license": "MIT",
 }

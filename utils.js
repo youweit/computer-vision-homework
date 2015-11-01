@@ -2,7 +2,7 @@
 
 const cv = require('opencv')
 
-// an vonvenie
+// a convenience function gor getting the pixel gray value 0 ~ 255
 cv.Matrix.prototype.pixelValueAt = function (row, col) {
   return this.pixel(row, col)[0]
 }
@@ -73,5 +73,5 @@ exports.drawHistogram = function (mat, fileName) {
     histogramData[i] += histogramData[i - 1]
   }
 
-  return histogramData
+  return histogram
 }
