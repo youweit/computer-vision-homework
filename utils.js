@@ -2,6 +2,7 @@
 
 const cv = require('opencv')
 
+// an vonvenie
 cv.Matrix.prototype.pixelValueAt = function (row, col) {
   return this.pixel(row, col)[0]
 }
@@ -67,10 +68,6 @@ exports.drawHistogram = function (mat, fileName) {
       }
     }
   }
-
-  mat.save('./output/HW3/HW3_' + fileName + '.bmp')
-  histogram.save('./output/HW3/HW3_' + fileName + '_histogram.bmp')
-
   // calculate the cdf of each gray level.
   for (let i = 1; i < 256; i++) {
     histogramData[i] += histogramData[i - 1]

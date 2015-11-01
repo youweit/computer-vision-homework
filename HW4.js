@@ -9,9 +9,9 @@ const blackPixel = [0, 0, 0]
 function Kernel (kernel, origin) {
   this.kernel = kernel
   this.origin = origin
-
-  // this calcutate the relative postition for the kernel. only present the 1 one.
   this.points = []
+
+  // array[y][x], y is the first array, x is the second.
   for (let y = 0; y < kernel.length; y++) {
     for (let x = 0; x < kernel[y].length; x++) {
       if (kernel[y][x] === 1) {
@@ -25,8 +25,8 @@ function Kernel (kernel, origin) {
 function applyDilation (inputMat, kernel) {
   let result = inputMat.copy()
 
-  for (let i = 0; i < inputMat.height(); i++) { // this is image height
-    for (let j = 0; j < inputMat.width(); j++) { // this is image width
+  for (let i = 0; i < inputMat.height(); i++) { // row
+    for (let j = 0; j < inputMat.width(); j++) { // column
       if (inputMat.pixelValueAt(i, j)) {
         for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
           let x = j + kernel.points[kernelIndex].x
@@ -45,8 +45,8 @@ function applyDilation (inputMat, kernel) {
 function applyErosion (inputMat, kernel) {
   let result = inputMat.copy()
 
-  for (let i = 0; i < inputMat.height(); i++) { // this is image height, row
-    for (let j = 0; j < inputMat.width(); j++) { // this is image width, column
+  for (let i = 0; i < inputMat.height(); i++) { // row
+    for (let j = 0; j < inputMat.width(); j++) { // column
       let erosion = true
       for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
         let x = j + kernel.points[kernelIndex].x
@@ -84,8 +84,8 @@ function applyClosing (inputMat, kernel) {
 function applyReverse (inputMat) {
   let result = inputMat.copy()
 
-  for (let i = 0; i < inputMat.height(); i++) { // this is image height
-    for (let j = 0; j < inputMat.width(); j++) { // this is image width
+  for (let i = 0; i < inputMat.height(); i++) { // row
+    for (let j = 0; j < inputMat.width(); j++) { // column
       if (inputMat.pixelValueAt(i, j)) {
         result.pixel(i, j, blackPixel)
       } else {
@@ -100,8 +100,8 @@ function applyReverse (inputMat) {
 function intersect (matA, matB) {
   let result = matA.copy()
 
-  for (let i = 0; i < matA.height(); i++) { // this is image height
-    for (let j = 0; j < matA.width(); j++) { // this is image width
+  for (let i = 0; i < matA.height(); i++) { // row
+    for (let j = 0; j < matA.width(); j++) { // column
       if (matA.pixelValueAt(i, j) & matB.pixelValueAt(i, j)) {
         result.pixel(i, j, whitePixel)
       } else {
@@ -118,6 +118,7 @@ function applyHitAndMiss (inputMat, J, K) {
 }
 
 function main () {
+  
   // read lena image from the file system using opencv
   cv.readImage(process.argv[2], function (err, inputMat) {
     if (err || inputMat.height() === 0 || inputMat.width === 0) {
