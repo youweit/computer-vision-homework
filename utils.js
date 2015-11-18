@@ -4,7 +4,11 @@ const cv = require('opencv')
 
 // a convenience function gor getting the pixel gray value 0 ~ 255
 cv.Matrix.prototype.pixelValueAt = function (row, col) {
-  return this.pixel(row, col)[0]
+  if (!this.pixel(row, col)[0]) {
+    return this.pixel(row, col)
+  } else {
+    return this.pixel(row, col)[0]
+  }
 }
 
 exports.showMatrixOnWindow = function (mat) {
@@ -30,6 +34,7 @@ exports.binarized = function (mat) {
   let binary = mat.copy()
   let black = [0, 0, 0]
   let white = [255, 255, 255]
+  console.log('binarizing ', mat.width(), 'x', mat.height(), 'image')
   for (let i = 0; i < mat.height(); i++) {
     for (let j = 0; j < mat.width(); j++) {
       // apply binary for threshold 128
