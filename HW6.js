@@ -51,17 +51,18 @@ function yokoiConnect (neighbors) {
 [8][4][5]
 */
 function getNeighbors (mat, col, row) {
-  return [
-    mat.pixelValueAt(col, row),
-    mat.pixelValueAt(col, row + 1),
-    mat.pixelValueAt(col - 1, row),
-    mat.pixelValueAt(col, row - 1),
-    mat.pixelValueAt(col + 1, row),
-    mat.pixelValueAt(col + 1, row + 1),
-    mat.pixelValueAt(col - 1, row + 1),
-    mat.pixelValueAt(col - 1, row - 1),
-    mat.pixelValueAt(col + 1, row - 1),
+  let neighbors = [
+    mat.pixelValueAt(row, col),
+    mat.pixelValueAt(row, col + 1),
+    mat.pixelValueAt(row - 1, col),
+    mat.pixelValueAt(row, col - 1),
+    mat.pixelValueAt(row + 1, col),
+    mat.pixelValueAt(row + 1, col + 1),
+    mat.pixelValueAt(row - 1, col + 1),
+    mat.pixelValueAt(row - 1, col - 1),
+    mat.pixelValueAt(row + 1, col - 1),
   ]
+  return neighbors
 }
 
 function main () {
