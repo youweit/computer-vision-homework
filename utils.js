@@ -4,10 +4,10 @@ const cv = require('opencv')
 
 // a convenience function gor getting the pixel gray value 0 ~ 255
 cv.Matrix.prototype.pixelValueAt = function (row, col) {
-  if (!this.pixel(row, col)[0]) {
-    return this.pixel(row, col)
-  } else {
+  if (row < this.height() && row >= 0 && col < this.height() && col >= 0) {
     return this.pixel(row, col)[0]
+  } else {
+    return undefined
   }
 }
 
