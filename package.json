@@ -13,5 +13,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Youwei Teng",
-  "license": "MIT",
+  "license": "MIT"
 }
