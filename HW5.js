@@ -99,7 +99,7 @@ function main () {
       [0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0],
-      [-1, 0, 0, 0, -1],
+      [-1, 0, 0, 0, -1]
     ] // origin is 2,2,
 
     dilationMat = applyDilation(inputMat, new Kernel(octogonalKenel, {x: 2, y: 2}))

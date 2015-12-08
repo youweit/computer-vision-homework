@@ -90,7 +90,6 @@ function main () {
       stream.write(out + '\n')
       console.log(out)
     }
-
   })
 }
 
