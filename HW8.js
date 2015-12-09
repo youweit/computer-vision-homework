@@ -122,9 +122,6 @@ function applySaltAndPepper (inputMat, threshold) {
         saltPepperMat.pixel(i, j, [BLACK, BLACK, BLACK])
       } else if (random > 1 - threshold) {
         saltPepperMat.pixel(i, j, [WHITE, WHITE, WHITE])
-      } else {
-        let value = saltPepperMat.pixelValueAt(i, j) + random
-        saltPepperMat.pixel(i, j, [value, value, value])
       }
     }
   }
@@ -134,8 +131,8 @@ function applySaltAndPepper (inputMat, threshold) {
 function applyBoxFilter (inputMat, boxWidth, boxHeight) {
   let boxFilterMat = inputMat.copy()
   let bounds = {
-    x: boxWidth / 2,
-    y: boxHeight / 2
+    x: Math.floor(boxWidth / 2),
+    y: Math.floor(boxHeight / 2)
   }
   console.log('applying box filter', boxHeight, 'x', boxHeight)
   for (let i = 0; i < inputMat.height(); i++) { // row
@@ -175,15 +172,15 @@ function median (values) {
   if (values.length % 2) {
     return values[half]
   } else {
-    return (values[half - 1] + values[half]) / 2
+    return (values[half - 1] + values[half]) / 2.0
   }
 }
 
 function applyMedianFilter (inputMat, boxWidth, boxHeight) {
   let medianFilterMat = inputMat.copy()
   let bounds = {
-    x: boxWidth / 2,
-    y: boxHeight / 2
+    x: Math.floor(boxWidth / 2),
+    y: Math.floor(boxHeight / 2)
   }
   console.log('applying median filter', boxHeight, 'x', boxHeight)
   for (let i = 0; i < inputMat.height(); i++) { // row
@@ -199,13 +196,13 @@ function applyMedianFilter (inputMat, boxWidth, boxHeight) {
             x: localOrigin.x + n,
             y: localOrigin.y + m
           }
-          if (result.x >= 0 && result.x < medianFilterMat.width() && result.y >= 0 && result.y < medianFilterMat.height()) {
+          if (result.x >= 0 && result.x < inputMat.width() && result.y >= 0 && result.y < inputMat.height()) {
             boxList.push(inputMat.pixelValueAt(result.y, result.x))
           }
         }
       }
-      let value = median(boxList)
-      medianFilterMat.pixel(i, j, [value, value, value])
+      let medianValue = median(boxList)
+      medianFilterMat.pixel(i, j, [medianValue, medianValue, medianValue])
     }
   }
 
@@ -260,6 +257,15 @@ function main () {
       console.log('input image error!')
       return
     }
+
+    let kernel = new Kernel([
+      [-1, 0, 0, 0, -1],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+      [-1, 0, 0, 0, -1]
+    ], {x: 2, y: 2}) // origin is 2,2
+
     let outputDirectory = './output/HW8/'
     let stream = fs.createWriteStream(outputDirectory + 'SNR.txt')
 
@@ -291,13 +297,21 @@ function main () {
     // Median
     // let median33Gaussian10Mat = applyMedianFilter(gaussian10Mat, 3, 3)
     // let median33Gaussian30Mat = applyMedianFilter(gaussian30Mat, 3, 3)
-    let median33salt005Mat = applyMedianFilter(saltAndPepper005Mat, 3, 3)
-    let median33salt01Mat = applyMedianFilter(saltAndPepper01Mat, 3, 3)
+    // let median33salt005Mat = applyMedianFilter(saltAndPepper005Mat, 3, 3)
+    // let median33salt01Mat = applyMedianFilter(saltAndPepper01Mat, 3, 3)
 
     // median33Gaussian10Mat.save(outputDirectory + 'HW8_median_33_gaussian_10.bmp')
     // median33Gaussian30Mat.save(outputDirectory + 'HW8_median_33_gaussian_30.bmp')
-    median33salt005Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_005.bmp')
-    median33salt01Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_01.bmp')
+    // median33salt005Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_005.bmp')
+    // median33salt01Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_01.bmp')
+
+    // let closeThenOpeningMedian33salt005Mat = applyClosingThenOpening(median33salt005Mat, kernel)
+    // let closeThenOpeningMedian33salt01Mat = applyClosingThenOpening(median33salt01Mat, kernel)
+    // closeThenOpeningMedian33salt005Mat.save(outputDirectory + 'HW8_close_then_open_median_33_salt_and_pepper_005.bmp')
+    // closeThenOpeningMedian33salt01Mat.save(outputDirectory + 'HW8_close_then_open_median_33_salt_and_pepper_01.bmp')
+
+    let m = applyClosingThenOpening(saltAndPepper01Mat, kernel)
+    m.save(outputDirectory + 'm.bmp')
 
     console.log('finished')
   })
