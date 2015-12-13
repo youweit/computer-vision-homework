@@ -43,27 +43,16 @@ function applyErosion (inputMat, kernel) {
 
   for (let i = 0; i < inputMat.height(); i++) { // row
     for (let j = 0; j < inputMat.width(); j++) { // column
-      let erosion = true
       let localMin = 255
       for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
         let x = j + kernel.points[kernelIndex].x
         let y = i + kernel.points[kernelIndex].y
 
         if (x >= 0 && x <= inputMat.width() && y >= 0 && y <= inputMat.height()) {
-          if (!inputMat.pixelValueAt(y, x)) {
-            erosion = false
-            break
-          } else {
-            localMin = Math.min(localMin, inputMat.pixelValueAt(y, x))
-          }
-        } else {
-          erosion = false
-          break
+          localMin = Math.min(localMin, inputMat.pixelValueAt(y, x))
         }
       }
-      if (erosion) {
-        result.pixel(i, j, [localMin, localMin, localMin])
-      }
+      result.pixel(i, j, [localMin, localMin, localMin])
     }
   }
   return result
