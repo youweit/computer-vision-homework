@@ -46,27 +46,16 @@ function applyErosion (inputMat, kernel) {
 
   for (let i = 0; i < inputMat.height(); i++) { // row
     for (let j = 0; j < inputMat.width(); j++) { // column
-      let erosion = true
       let localMin = 255
       for (let kernelIndex = 0; kernelIndex < kernel.points.length; kernelIndex++) {
         let x = j + kernel.points[kernelIndex].x
         let y = i + kernel.points[kernelIndex].y
 
         if (x >= 0 && x <= inputMat.width() && y >= 0 && y <= inputMat.height()) {
-          if (!inputMat.pixelValueAt(y, x)) {
-            erosion = false
-            break
-          } else {
-            localMin = Math.min(localMin, inputMat.pixelValueAt(y, x))
-          }
-        } else {
-          erosion = false
-          break
+          localMin = Math.min(localMin, inputMat.pixelValueAt(y, x))
         }
       }
-      if (erosion) {
-        result.pixel(i, j, [localMin, localMin, localMin])
-      }
+      result.pixel(i, j, [localMin, localMin, localMin])
     }
   }
   return result
@@ -81,10 +70,12 @@ function applyClosing (inputMat, kernel) {
 }
 
 function applyClosingThenOpening (inputMat, kernel) {
+  console.log('applyClosingThenOpening')
   return applyOpening(applyClosing(inputMat, kernel), kernel)
 }
 
 function applyOpeningThenClosing (inputMat, kernel) {
+  console.log('applyOpeningThenClosing')
   return applyClosing(applyOpening(inputMat, kernel), kernel)
 }
 
@@ -245,7 +236,7 @@ function calculateSNR (originalMat, noiseMat) {
     }
   }
   vn /= size
-  let value = 10 * Math.log10(Math.sqrt(vs / vn))
+  let value = 20 * Math.log10(Math.sqrt(vs / vn))
   console.log('SNR = ', value, 'us =', us, 'vs =', vs, 'un =', un, 'vn =', vn)
   return value
 }
@@ -271,48 +262,113 @@ function main () {
 
     let gaussian30Mat = applyGaussianNoise(inputMat, 30)
     let gaussian10Mat = applyGaussianNoise(inputMat, 10)
-    gaussian30Mat.save(outputDirectory + 'HW8_gaussian_30.bmp')
-    gaussian10Mat.save(outputDirectory + 'HW8_gaussian_10.bmp')
 
     let saltAndPepper005Mat = applySaltAndPepper(inputMat, 0.05)
     let saltAndPepper01Mat = applySaltAndPepper(inputMat, 0.1)
+
+    gaussian30Mat.save(outputDirectory + 'HW8_gaussian_30.bmp')
+    gaussian10Mat.save(outputDirectory + 'HW8_gaussian_10.bmp')
     saltAndPepper005Mat.save(outputDirectory + 'HW8_salt_and_pepper_005.bmp')
     saltAndPepper01Mat.save(outputDirectory + 'HW8_salt_and_pepper_01.bmp')
 
-    // Box
-    // let box33Gaussian10Mat = applyBoxFilter(gaussian10Mat, 3, 3)
-    // let box33Gaussian30Mat = applyBoxFilter(gaussian30Mat, 3, 3)
-    // let box33salt005Mat = applyBoxFilter(saltAndPepper005Mat, 3, 3)
-    // let box33salt01Mat = applyBoxFilter(saltAndPepper01Mat, 3, 3)
+    stream.write('gaussian 10: ' + calculateSNR(inputMat, gaussian10Mat) + '\n')
+    stream.write('gaussian 30: ' + calculateSNR(inputMat, gaussian30Mat) + '\n')
+    stream.write('salt and pepper 0.05: ' + calculateSNR(inputMat, saltAndPepper005Mat) + '\n')
+    stream.write('salt and pepper 0.1: ' + calculateSNR(inputMat, saltAndPepper01Mat) + '\n')
 
-    // box33Gaussian10Mat.save('./output/HW8/HW8_box_33_gaussian_10.bmp')
-    // box33Gaussian30Mat.save('./output/HW8/HW8_box_33_gaussian_30.bmp')
-    // box33salt005Mat.save('./output/HW8/HW8_box_33_salt_and_pepper_005.bmp')
-    // box33salt01Mat.save('./output/HW8/HW8_box_33_salt_and_pepper_01.bmp')
+    // Box 3x3
+    let box33Gaussian10Mat = applyBoxFilter(gaussian10Mat, 3, 3)
+    let box33Gaussian30Mat = applyBoxFilter(gaussian30Mat, 3, 3)
+    let box33salt005Mat = applyBoxFilter(saltAndPepper005Mat, 3, 3)
+    let box33salt01Mat = applyBoxFilter(saltAndPepper01Mat, 3, 3)
 
-    // stream.write('box 3x3 gaussian 10: ' + calculateSNR(inputMat, box33Gaussian10Mat) + '\n')
-    // stream.write('box 3x3 gaussian 30: ' + calculateSNR(inputMat, box33Gaussian30Mat) + '\n')
-    // stream.write('box 3x3 salt and pepper 0.05: ' + calculateSNR(inputMat, saltAndPepper005Mat) + '\n')
-    // stream.write('box 3x3 salt and pepper 0.1: ' + calculateSNR(inputMat, saltAndPepper01Mat) + '\n')
-    // Median
-    // let median33Gaussian10Mat = applyMedianFilter(gaussian10Mat, 3, 3)
-    // let median33Gaussian30Mat = applyMedianFilter(gaussian30Mat, 3, 3)
-    // let median33salt005Mat = applyMedianFilter(saltAndPepper005Mat, 3, 3)
-    // let median33salt01Mat = applyMedianFilter(saltAndPepper01Mat, 3, 3)
+    box33Gaussian10Mat.save(outputDirectory + 'HW8_box_33_gaussian_10.bmp')
+    box33Gaussian30Mat.save(outputDirectory + 'HW8_box_33_gaussian_30.bmp')
+    box33salt005Mat.save(outputDirectory + 'HW8_box_33_salt_and_pepper_005.bmp')
+    box33salt01Mat.save(outputDirectory + 'HW8_box_33_salt_and_pepper_01.bmp')
 
-    // median33Gaussian10Mat.save(outputDirectory + 'HW8_median_33_gaussian_10.bmp')
-    // median33Gaussian30Mat.save(outputDirectory + 'HW8_median_33_gaussian_30.bmp')
-    // median33salt005Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_005.bmp')
-    // median33salt01Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_01.bmp')
+    stream.write('box 3x3 gaussian 10: ' + calculateSNR(inputMat, box33Gaussian10Mat) + '\n')
+    stream.write('box 3x3 gaussian 30: ' + calculateSNR(inputMat, box33Gaussian30Mat) + '\n')
+    stream.write('box 3x3 salt and pepper 0.05: ' + calculateSNR(inputMat, box33salt005Mat) + '\n')
+    stream.write('box 3x3 salt and pepper 0.1: ' + calculateSNR(inputMat, box33salt01Mat) + '\n')
 
-    // let closeThenOpeningMedian33salt005Mat = applyClosingThenOpening(median33salt005Mat, kernel)
-    // let closeThenOpeningMedian33salt01Mat = applyClosingThenOpening(median33salt01Mat, kernel)
-    // closeThenOpeningMedian33salt005Mat.save(outputDirectory + 'HW8_close_then_open_median_33_salt_and_pepper_005.bmp')
-    // closeThenOpeningMedian33salt01Mat.save(outputDirectory + 'HW8_close_then_open_median_33_salt_and_pepper_01.bmp')
+    // Box 5x5
+    let box55Gaussian10Mat = applyBoxFilter(gaussian10Mat, 5, 5)
+    let box55Gaussian30Mat = applyBoxFilter(gaussian30Mat, 5, 5)
+    let box55salt005Mat = applyBoxFilter(saltAndPepper005Mat, 5, 5)
+    let box55salt01Mat = applyBoxFilter(saltAndPepper01Mat, 5, 5)
 
-    let m = applyClosingThenOpening(saltAndPepper01Mat, kernel)
-    m.save(outputDirectory + 'm.bmp')
+    box55Gaussian10Mat.save(outputDirectory + 'HW8_box_55_gaussian_10.bmp')
+    box55Gaussian30Mat.save(outputDirectory + 'HW8_box_55_gaussian_30.bmp')
+    box55salt005Mat.save(outputDirectory + 'HW8_box_55_salt_and_pepper_005.bmp')
+    box55salt01Mat.save(outputDirectory + 'HW8_box_55_salt_and_pepper_01.bmp')
 
+    stream.write('box 5x5 gaussian 10: ' + calculateSNR(inputMat, box55Gaussian10Mat) + '\n')
+    stream.write('box 5x5 gaussian 30: ' + calculateSNR(inputMat, box55Gaussian30Mat) + '\n')
+    stream.write('box 5x5 salt and pepper 0.05: ' + calculateSNR(inputMat, box55salt005Mat) + '\n')
+    stream.write('box 5x5 salt and pepper 0.1: ' + calculateSNR(inputMat, box55salt01Mat) + '\n')
+
+    // Median 3x3
+    let median33Gaussian10Mat = applyMedianFilter(gaussian10Mat, 3, 3)
+    let median33Gaussian30Mat = applyMedianFilter(gaussian30Mat, 3, 3)
+    let median33salt005Mat = applyMedianFilter(saltAndPepper005Mat, 3, 3)
+    let median33salt01Mat = applyMedianFilter(saltAndPepper01Mat, 3, 3)
+
+    median33Gaussian10Mat.save(outputDirectory + 'HW8_median_33_gaussian_10.bmp')
+    median33Gaussian30Mat.save(outputDirectory + 'HW8_median_33_gaussian_30.bmp')
+    median33salt005Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_005.bmp')
+    median33salt01Mat.save(outputDirectory + 'HW8_median_33_salt_and_pepper_01.bmp')
+
+    stream.write('median 3x3 gaussian 10: ' + calculateSNR(inputMat, median33Gaussian10Mat) + '\n')
+    stream.write('median 3x3 gaussian 30: ' + calculateSNR(inputMat, median33Gaussian30Mat) + '\n')
+    stream.write('median 3x3 salt and pepper 0.05: ' + calculateSNR(inputMat, median33salt005Mat) + '\n')
+    stream.write('median 3x3 salt and pepper 0.1: ' + calculateSNR(inputMat, median33salt01Mat) + '\n')
+
+    // Median 5x5
+    let median55Gaussian10Mat = applyMedianFilter(gaussian10Mat, 5, 5)
+    let median55Gaussian30Mat = applyMedianFilter(gaussian30Mat, 5, 5)
+    let median55salt005Mat = applyMedianFilter(saltAndPepper005Mat, 5, 5)
+    let median55salt01Mat = applyMedianFilter(saltAndPepper01Mat, 5, 5)
+
+    median55Gaussian10Mat.save(outputDirectory + 'HW8_median_55_gaussian_10.bmp')
+    median55Gaussian30Mat.save(outputDirectory + 'HW8_median_55_gaussian_30.bmp')
+    median55salt005Mat.save(outputDirectory + 'HW8_median_55_salt_and_pepper_005.bmp')
+    median55salt01Mat.save(outputDirectory + 'HW8_median_55_salt_and_pepper_01.bmp')
+
+    stream.write('median 5x5 gaussian 10: ' + calculateSNR(inputMat, median55Gaussian10Mat) + '\n')
+    stream.write('median 5x5 gaussian 30: ' + calculateSNR(inputMat, median55Gaussian30Mat) + '\n')
+    stream.write('median 5x5 salt and pepper 0.05: ' + calculateSNR(inputMat, median55salt005Mat) + '\n')
+    stream.write('median 5x5 salt and pepper 0.1: ' + calculateSNR(inputMat, median55salt01Mat) + '\n')
+
+    let closingThenOpeningSaltAndPepper005Mat = applyClosingThenOpening(saltAndPepper005Mat, kernel)
+    let closingThenOpeningSaltAndPepper01Mat = applyClosingThenOpening(saltAndPepper01Mat, kernel)
+    let closingThenOpeningGaussian30Mat = applyClosingThenOpening(gaussian30Mat, kernel)
+    let closingThenOpeningGaussian10Mat = applyClosingThenOpening(gaussian10Mat, kernel)
+
+    closingThenOpeningSaltAndPepper005Mat.save(outputDirectory + 'HW8_closing_then_opening_salt_and_pepper_005.bmp')
+    closingThenOpeningSaltAndPepper01Mat.save(outputDirectory + 'HW8_closing_then_opening_salt_and_pepper_01.bmp')
+    closingThenOpeningGaussian30Mat.save(outputDirectory + 'HW8_closing_then_opening_gaussian_30.bmp')
+    closingThenOpeningGaussian10Mat.save(outputDirectory + 'HW8_closing_then_opening_gaussian_10.bmp')
+
+    stream.write('closing then opening gaussian 10: ' + calculateSNR(inputMat, closingThenOpeningGaussian10Mat) + '\n')
+    stream.write('closing then opening gaussian 30: ' + calculateSNR(inputMat, closingThenOpeningGaussian30Mat) + '\n')
+    stream.write('closing then opening salt and pepper 0.05: ' + calculateSNR(inputMat, closingThenOpeningSaltAndPepper005Mat) + '\n')
+    stream.write('closing then opening salt and pepper 0.1: ' + calculateSNR(inputMat, closingThenOpeningSaltAndPepper01Mat) + '\n')
+
+    let openingThenClosingSaltAndPepper005Mat = applyOpeningThenClosing(saltAndPepper005Mat, kernel)
+    let openingThenClosingSaltAndPepper01Mat = applyOpeningThenClosing(saltAndPepper01Mat, kernel)
+    let openingThenClosingGaussian30Mat = applyOpeningThenClosing(gaussian30Mat, kernel)
+    let openingThenClosingGaussian10Mat = applyOpeningThenClosing(gaussian10Mat, kernel)
+
+    openingThenClosingSaltAndPepper005Mat.save(outputDirectory + 'HW8_opening_then_closing_salt_and_pepper_005.bmp')
+    openingThenClosingSaltAndPepper01Mat.save(outputDirectory + 'HW8_opening_then_closing_salt_and_pepper_01.bmp')
+    openingThenClosingGaussian30Mat.save(outputDirectory + 'HW8_opening_then_closing_gaussian_30.bmp')
+    openingThenClosingGaussian10Mat.save(outputDirectory + 'HW8_opening_then_closing_gaussian_10.bmp')
+
+    stream.write('opening then closing gaussian 10: ' + calculateSNR(inputMat, openingThenClosingGaussian10Mat) + '\n')
+    stream.write('opening then closing gaussian 30: ' + calculateSNR(inputMat, openingThenClosingGaussian30Mat) + '\n')
+    stream.write('opening then closing salt and pepper 0.05: ' + calculateSNR(inputMat, openingThenClosingSaltAndPepper005Mat) + '\n')
+    stream.write('opening then closing salt and pepper 0.1: ' + calculateSNR(inputMat, openingThenClosingSaltAndPepper01Mat) + '\n')
     console.log('finished')
   })
 }

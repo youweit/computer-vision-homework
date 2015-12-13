@@ -1,0 +1,28 @@
+gaussian 10: 13.60921599175628
+gaussian 30: 4.182741876086615
+salt and pepper 0.05: 0.9259515279560584
+salt and pepper 0.1: -2.060158118782916
+box 3x3 gaussian 10: 17.756078811225336
+box 3x3 gaussian 30: 12.611261234760327
+box 3x3 salt and pepper 0.05: 9.469199944478522
+box 3x3 salt and pepper 0.1: 6.398933213767304
+box 5x5 gaussian 10: 14.872396921778606
+box 5x5 gaussian 30: 13.296103383102928
+box 5x5 salt and pepper 0.05: 11.180377526726808
+box 5x5 salt and pepper 0.1: 8.594781408607913
+median 3x3 gaussian 10: 17.645277349135558
+median 3x3 gaussian 30: 11.020428130414645
+median 3x3 salt and pepper 0.05: 19.36685967557611
+median 3x3 salt and pepper 0.1: 15.402028252114883
+median 5x5 gaussian 10: 15.992435638165015
+median 5x5 gaussian 30: 12.856337161892835
+median 5x5 salt and pepper 0.05: 16.381047106806648
+median 5x5 salt and pepper 0.1: 15.775080750602433
+closing then opening gaussian 10: 7.398665648876519
+closing then opening gaussian 30: 5.865396354007051
+closing then opening salt and pepper 0.05: 3.976246967686112
+closing then opening salt and pepper 0.1: -2.908870019374372
+opening then closing gaussian 10: 8.32511568816399
+opening then closing gaussian 30: 8.378431163743672
+opening then closing salt and pepper 0.05: 4.431798194028847
+opening then closing salt and pepper 0.1: -2.239921302669426
