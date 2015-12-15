@@ -1,4 +1,3 @@
-Computer Vision I, HW8, M10409304 (跨校選修) 資管碩一 鄧又偉
 ##Thinning
 
 ###Getting Started
@@ -171,23 +170,6 @@ function applyMedianFilter (inputMat, boxWidth, boxHeight) {
 ###Results
 
 ####Gaussian Noise, Amplitude = 10
-
-<style>
-div.item {
-    vertical-align: top;
-    display: inline-block;
-    text-align: center;
-    width: 280px;
-}
-img {
-    width: 280px;
-    height: 280px;
-    background-color: grey;
-}
-.caption {
-    display: block;
-}
-</style>
 
 <div class="item">
     <img src="https://raw.githubusercontent.com/youweit/CV-homework/master/output/HW8/HW8_gaussian_10.bmp"/>
