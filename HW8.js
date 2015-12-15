@@ -151,7 +151,6 @@ function applyBoxFilter (inputMat, boxWidth, boxHeight) {
       boxFilterMat.pixel(i, j, [value, value, value])
     }
   }
-
   return boxFilterMat
 }
 
@@ -196,7 +195,6 @@ function applyMedianFilter (inputMat, boxWidth, boxHeight) {
       medianFilterMat.pixel(i, j, [medianValue, medianValue, medianValue])
     }
   }
-
   return medianFilterMat
 }
 
