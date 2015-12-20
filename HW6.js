@@ -17,11 +17,11 @@ function scaleDown (inputMat) {
 }
 
 function h (b, c, d, e) {
-  if (b === c && (d != b || e != b)) {
+  if (b === c && (d !== b || e !== b)) {
     return 'q'
   } else if (b === c && (d === b || e === b)) {
     return 'r'
-  } else if (b != c) {
+  } else if (b !== c) {
     return 's'
   }
 }
@@ -60,7 +60,7 @@ function getNeighbors (mat, col, row) {
     mat.pixelValueAt(row + 1, col + 1),
     mat.pixelValueAt(row - 1, col + 1),
     mat.pixelValueAt(row - 1, col - 1),
-    mat.pixelValueAt(row + 1, col - 1),
+    mat.pixelValueAt(row + 1, col - 1)
   ]
   return neighbors
 }
