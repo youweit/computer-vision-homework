@@ -124,21 +124,21 @@ function main () {
 
     for (let i = 0; i < inputMat.height(); i++) { // row
       for (let j = 0; j < inputMat.width(); j++) { // col
-        laplacian1MatTemp[i][j] = calculateKernel(getNeighbors(inputMat, {x: i, y: j}, {x: 3, y: 3}), mask1, {x: 3, y: 3}, 15, 1)
-        laplacian2MatTemp[i][j] = calculateKernel(getNeighbors(inputMat, {x: i, y: j}, {x: 3, y: 3}), mask2, {x: 3, y: 3}, 15, 1 / 3.0)
-        minimumMatTemp[i][j] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 3, y: 3}), minMask, {x: 3, y: 3}, 20, 1 / 3.0)
-        laplaceGaussianMatTemp[i][j] = calculateKernel(getNeighbors(inputMat, {x: i, y: j}, {x: 11, y: 11}), gaussianMask, {x: 11, y: 11}, 3000, 1)
-        diffGaussianMatTemp[i][j] = calculateKernel(getNeighbors(inputMat, {x: i, y: j}, {x: 11, y: 11}), diffGaussianMask, {x: 11, y: 11}, 1, 1)
+        laplacian1MatTemp[j][i] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 3, y: 3}), mask1, {x: 3, y: 3}, 15, 1)
+        laplacian2MatTemp[j][i] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 3, y: 3}), mask2, {x: 3, y: 3}, 15, 1 / 3.0)
+        minimumMatTemp[j][i] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 3, y: 3}), minMask, {x: 3, y: 3}, 20, 1 / 3.0)
+        laplaceGaussianMatTemp[j][i] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 11, y: 11}), gaussianMask, {x: 11, y: 11}, 3000, 1)
+        diffGaussianMatTemp[j][i] = calculateKernel(getNeighbors(inputMat, {x: j, y: i}, {x: 11, y: 11}), diffGaussianMask, {x: 11, y: 11}, 1, 1)
       }
     }
 
     for (let i = 0; i < inputMat.height(); i++) { // row
       for (let j = 0; j < inputMat.width(); j++) { // col
-        laplacian1Mat.pixel(i, j, checkNeighbors({x: i, y: j}, laplacian1MatTemp, {x: 3, y: 3}))
-        laplacian2Mat.pixel(i, j, checkNeighbors({x: i, y: j}, laplacian2MatTemp, {x: 3, y: 3}))
-        minimumMat.pixel(i, j, checkNeighbors({x: i, y: j}, minimumMatTemp, {x: 3, y: 3}))
-        laplaceGaussianMat.pixel(i, j, checkNeighbors({x: i, y: j}, laplaceGaussianMatTemp, {x: 11, y: 11}))
-        diffGaussianMat.pixel(i, j, checkNeighbors({x: i, y: j}, diffGaussianMatTemp, {x: 11, y: 11}))
+        laplacian1Mat.pixel(i, j, checkNeighbors({x: j, y: i}, laplacian1MatTemp, {x: 3, y: 3}))
+        laplacian2Mat.pixel(i, j, checkNeighbors({x: j, y: i}, laplacian2MatTemp, {x: 3, y: 3}))
+        minimumMat.pixel(i, j, checkNeighbors({x: j, y: i}, minimumMatTemp, {x: 3, y: 3}))
+        laplaceGaussianMat.pixel(i, j, checkNeighbors({x: j, y: i}, laplaceGaussianMatTemp, {x: 11, y: 11}))
+        diffGaussianMat.pixel(i, j, checkNeighbors({x: j, y: i}, diffGaussianMatTemp, {x: 11, y: 11}))
       }
     }
 
